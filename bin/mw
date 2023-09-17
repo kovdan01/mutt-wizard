@@ -100,7 +100,7 @@ getprofiles() {
 		1143) imapssl=None ;;
 		143) imapssl=STARTTLS ;;
 		esac
-		prepmbsync
+		#prepmbsync
 		;;
 	esac
 	prepmsmtp
@@ -208,9 +208,10 @@ getboxes() {
 	if [ -n "${force+x}" ]; then
 		mailboxes="$(printf "INBOX\\nDrafts\\nJunk\\nTrash\\nSent\\nArchive")"
 	else
-		info="$(curl --location-trusted -s -m 5 --user "$login:$(pass "$passprefix$fulladdr")" --url "${protocol:-imaps}://$imap:${iport:-993}")"
-		[ -z "$info" ] && errorexit
-		mailboxes="$(echo "$info" | grep -v HasChildren | sed "s/.*\" //;s/\"//g" | tr -d '\r')"
+		#info="$(curl --location-trusted -s -m 5 --user "$login:$(pass "$passprefix$fulladdr")" --url "${protocol:-imaps}://$imap:${iport:-993}")"
+		#[ -z "$info" ] && errorexit
+		#mailboxes="$(echo "$info" | grep -v HasChildren | sed "s/.*\" //;s/\"//g" | tr -d '\r')"
+		mailboxes="$(mbsync -l $fulladdr)"
 	fi
 	[ "$type" = "pop" ] && mailboxes="INBOX"
 	for x in $(
@@ -407,7 +408,7 @@ while getopts "rfpXlhodTYD:y:i:I:s:S:u:a:n:P:x:m:t:" o; do case "${o}" in
 
 case "$action" in
 list) list ;;
-add) checkbasics && askinfo && getboxes && getprofiles && finalize ;;
+add) checkbasics && askinfo && prepmbsync && getboxes && getprofiles && finalize ;;
 delete) delete ;;
 sync)
 	echo "\`mw -y\` and \`mw -Y\` are now deprecated and will be removed in a future update. Please switch to using \`mailsync\`."
