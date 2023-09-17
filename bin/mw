@@ -212,7 +212,7 @@ getboxes() {
 		#[ -z "$info" ] && errorexit
 		#mailboxes="$(echo "$info" | grep -v HasChildren | sed "s/.*\" //;s/\"//g" | tr -d '\r')"
 		mkdir -p $maildir/$fulladdr
-		mailboxes="$(mbsync -l $fulladdr | sed 's/\//|/g')"
+		mailboxes="$(mbsync -l $fulladdr)"
 	fi
 	[ "$type" = "pop" ] && mailboxes="INBOX"
 	for x in $(
