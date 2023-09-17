@@ -211,7 +211,8 @@ getboxes() {
 		#info="$(curl --location-trusted -s -m 5 --user "$login:$(pass "$passprefix$fulladdr")" --url "${protocol:-imaps}://$imap:${iport:-993}")"
 		#[ -z "$info" ] && errorexit
 		#mailboxes="$(echo "$info" | grep -v HasChildren | sed "s/.*\" //;s/\"//g" | tr -d '\r')"
-		mailboxes="$(mbsync -l $fulladdr)"
+		mkdir -p $maildir/$fulladdr
+		mailboxes="$(mbsync -l $fulladdr | sed 's/\//|/g')"
 	fi
 	[ "$type" = "pop" ] && mailboxes="INBOX"
 	for x in $(
